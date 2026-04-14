@@ -1,0 +1,68 @@
+{
+    "model_name": "Autoencoder for Anomaly Detection",
+    "date_created": "2026-04-04 23:36:14",
+    "features_used": [
+        "hora",
+        "dia_semana",
+        "es_fin_de_semana",
+        "turno_activo",
+        "rol",
+        "intentos_login",
+        "metodo_auth",
+        "zona",
+        "protocolo",
+        "puerto",
+        "bytes_in",
+        "bytes_out",
+        "duracion_conn",
+        "num_conexiones",
+        "paquetes_enviados",
+        "ip_publica_flag",
+        "lat",
+        "lon",
+        "distancia",
+        "cpu_uso",
+        "ram_uso",
+        "escrituras_disco",
+        "accesos_ultimo_hora",
+        "sensor_metrica_1",
+        "sensor_metrica_2",
+        "sensor_metrica_3",
+        "sensor_metrica_4",
+        "sensor_metrica_5",
+        "sensor_metrica_6",
+        "sensor_metrica_7",
+        "sensor_metrica_8",
+        "sensor_metrica_9",
+        "sensor_metrica_10",
+        "sensor_metrica_11",
+        "sensor_metrica_12",
+        "sensor_metrica_13",
+        "sensor_metrica_14",
+        "sensor_metrica_15"
+    ],
+    "input_dimension": 38,
+    "encoding_dimension": 16,
+    "loss_function": "mse",
+    "optimizer": "Adam",
+    "epochs_trained": 48,
+    "best_val_loss": 0.001806617365218699,
+    "anomaly_threshold": 0.00499843015666579,
+    "metrics": {
+        "test_accuracy": 0.9622222222222222,
+        "test_precision": 0.8696808510638298,
+        "test_recall": 0.7299107142857143,
+        "test_f1_score": 0.7936893203883495,
+        "test_roc_auc": 0.8981609610774222,
+        "confusion_matrix": [
+            [
+                4003,
+                49
+            ],
+            [
+                121,
+                327
+            ]
+        ]
+    }
+}
