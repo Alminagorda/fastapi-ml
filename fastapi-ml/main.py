@@ -12,7 +12,7 @@ import tensorflow as tf
 from tensorflow import keras
 import joblib
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 app = FastAPI(title="Antamina ML Service", version="1.0")
 
@@ -32,7 +32,6 @@ print("Cargando componentes del modelo...")
 print("="*60)
 
 try:
-    import os
     cwd = os.getcwd()
     print(f"📁 Directorio actual: {cwd}")
     
@@ -134,7 +133,7 @@ def predict(data: Dict[str, Any]):
 # PREDICCIÓN EN LOTE — para el dashboard en tiempo real
 # ----------------------------------------------------------
 @app.post("/predict/batch")
-def predict_batch(data: list):
+def predict_batch(data: List[Dict[str, Any]]):
     try:
         df           = pd.DataFrame(data)
         for col in FEATURES:
@@ -241,14 +240,18 @@ def simulate_attack(attack_type: str, fase: str = "reconocimiento"):
 # ----------------------------------------------------------
 # INFO DEL MODELO
 # ----------------------------------------------------------
+@app.get("/")
+def root():
+    return {"message": "Antamina ML Service está en línea", "docs": "/docs"}
+
 @app.get("/model/info")
 def model_info():
     return {
-        "version":        metadata['model_version'],
-        "threshold":      THRESHOLD,
+        "version":        metadata.get('model_version', 'unknown'),
+        "threshold":      round(THRESHOLD, 6),
         "features_count": len(FEATURES),
         "features":       FEATURES,
-        "training_date":  metadata['training_date'],
-        "val_loss":       metadata['val_loss'],
-        "epochs_trained": metadata['epochs_trained']
+        "training_date":  metadata.get('training_date', 'unknown'),
+        "val_loss":       metadata.get('val_loss', 'unknown'),
+        "epochs_trained": metadata.get('epochs_trained', 'unknown')
     }
