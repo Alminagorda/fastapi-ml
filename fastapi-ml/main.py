@@ -25,15 +25,30 @@ app.add_middleware(
 # CARGA EL MODELO UNA SOLA VEZ AL INICIAR
 # ============================================================
 print("Cargando modelo...")
-model = keras.models.load_model('autoencoder_antamina.keras')
-scaler   = joblib.load('scaler_antamina.pkl')
-
-with open('model_metadata.json') as f:
-    metadata = json.load(f)
-
-THRESHOLD = metadata['anomaly_threshold']
-FEATURES  = metadata['features_used']
-print(f"✓ Modelo cargado — threshold: {THRESHOLD:.6f}")
+try:
+    import os
+    print(f"Directorio actual: {os.getcwd()}")
+    print(f"Archivos disponibles: {os.listdir('.')}")
+    
+    model = keras.models.load_model('autoencoder_antamina.keras')
+    print("✓ Modelo cargado")
+    
+    scaler = joblib.load('scaler_antamina.pkl')
+    print("✓ Scaler cargado")
+    
+    with open('model_metadata.json') as f:
+        metadata = json.load(f)
+    print("✓ Metadata cargada")
+    
+    THRESHOLD = metadata['anomaly_threshold']
+    FEATURES  = metadata['features_used']
+    print(f"✓ Modelo completamente inicializado — threshold: {THRESHOLD:.6f}")
+except FileNotFoundError as e:
+    print(f"ERROR: Archivo no encontrado: {e}")
+    raise
+except Exception as e:
+    print(f"ERROR al cargar modelo: {e}")
+    raise
 
 # ============================================================
 # ENDPOINTS
