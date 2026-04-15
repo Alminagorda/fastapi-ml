@@ -1,6 +1,9 @@
 # ============================================================
 # main.py — FastAPI Microservicio ML
 # ============================================================
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Reduce TensorFlow logging
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
@@ -24,30 +27,56 @@ app.add_middleware(
 # ============================================================
 # CARGA EL MODELO UNA SOLA VEZ AL INICIAR
 # ============================================================
-print("Cargando modelo...")
+print("="*60)
+print("Cargando componentes del modelo...")
+print("="*60)
+
 try:
     import os
-    print(f"Directorio actual: {os.getcwd()}")
-    print(f"Archivos disponibles: {os.listdir('.')}")
+    cwd = os.getcwd()
+    print(f"📁 Directorio actual: {cwd}")
     
+    files = os.listdir('.')
+    model_files = [f for f in files if f in ['autoencoder_antamina.keras', 'scaler_antamina.pkl', 'model_metadata.json']]
+    print(f"✓ Archivos de modelo encontrados: {len(model_files)}/3")
+    for f in model_files:
+        size = os.path.getsize(f) / 1024 / 1024
+        print(f"  - {f}: {size:.2f} MB")
+    
+    print("\n📦 Cargando modelo Keras...")
     model = keras.models.load_model('autoencoder_antamina.keras')
-    print("✓ Modelo cargado")
+    print(f"✓ Modelo cargado exitosamente")
+    print(f"  - Inputs: {model.input_shape}")
+    print(f"  - Outputs: {model.output_shape}")
     
+    print("\n📊 Cargando scaler...")
     scaler = joblib.load('scaler_antamina.pkl')
-    print("✓ Scaler cargado")
+    print(f"✓ Scaler cargado: {type(scaler).__name__}")
     
+    print("\n📋 Cargando metadatos...")
     with open('model_metadata.json') as f:
         metadata = json.load(f)
-    print("✓ Metadata cargada")
+    print(f"✓ Metadatos cargados")
     
     THRESHOLD = metadata['anomaly_threshold']
     FEATURES  = metadata['features_used']
-    print(f"✓ Modelo completamente inicializado — threshold: {THRESHOLD:.6f}")
+    print(f"\n✅ Modelo completamente inicializado")
+    print(f"  - Threshold: {THRESHOLD:.6f}")
+    print(f"  - Features: {len(FEATURES)}")
+    print("="*60)
+    
 except FileNotFoundError as e:
-    print(f"ERROR: Archivo no encontrado: {e}")
+    print(f"\n❌ ERROR: Archivo no encontrado")
+    print(f"   {e}")
+    print(f"\n   Archivos disponibles en {os.getcwd()}:")
+    for f in sorted(os.listdir('.')):
+        print(f"     - {f}")
     raise
 except Exception as e:
-    print(f"ERROR al cargar modelo: {e}")
+    print(f"\n❌ ERROR al cargar modelo:")
+    print(f"   {type(e).__name__}: {e}")
+    import traceback
+    traceback.print_exc()
     raise
 
 # ============================================================
